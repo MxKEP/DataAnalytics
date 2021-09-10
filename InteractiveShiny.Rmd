@@ -1,0 +1,99 @@
+---
+title: "Interactive Visualizations"
+author: "Michael Polonio"
+output:
+        html_document:
+                code_folding: 
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## *Please note that you can scroll down on the graph to see the variable radio buttons.
+```{r}
+library(dplyr);library(ggplot2);library(gapminder);
+library(shiny);library(shinythemes);library(shinydashboard)
+
+
+df<- gapminder
+
+ui <- fluidPage(theme = shinytheme("cyborg"),
+                sidebarLayout(position = "left",
+                              sidebarPanel(sliderInput("yearslider",
+                                                        label = h5("Years:"),
+                                                        min = 1952,
+                                                        max = 2007,
+                                                        value = c(1952, 2007)),
+                                           hr(),
+                                           uiOutput("input1"),
+                                           hr(),
+                                           uiOutput("input2"),
+                                           hr(),
+                                           radioButtons("vars",
+                                                        label = h5("Variables:"),
+                                                        choices = c("GDP Per Capita" = "gdpPercap",
+                                                                    "Life Expectancy" = "lifeExp",
+                                                                    "Population" = "pop")
+                                           ),
+                              ),
+                              
+                              mainPanel(plotOutput("dfplot"),
+                                        hr()
+                                        
+                              )
+                )
+)
+
+server <- (function(input, output){
+  output$input1 <- renderUI({
+    selectInput("country1",
+                h5("First country:"),
+                levels(df$country))
+  })
+  
+
+  output$input2 <- renderUI({
+    selectInput("country2",
+                h5("Second country:"),
+                selected = "United States",
+                levels(df$country))
+  })
+  
+  dataset <- reactive({
+    
+    df %>%
+      select(country, year, continent, 
+             matches(input$vars)) %>%
+      filter(country %in% c(input$country1, 
+                            input$country2),
+             year <= max(input$yearslider) & year >= min(input$yearslider) 
+             )
+  })
+
+  output$dfplot <- renderPlot({
+    
+
+    if(input$vars == "gdpPercap") y_axis_label <- "GDP Per Capita (USD)"
+    if(input$vars == "lifeExp") y_axis_label <- "Life Expectancy"
+    if(input$vars == "pop") y_axis_label <- "Population (millions)"
+    
+    
+    ggplot(dataset(), 
+      aes_string(x = "year", y = input$vars, colour = "country")) +
+      geom_line(size = 1) + 
+      geom_point(size = 3) +  
+      xlab("Year") +
+      ylab(y_axis_label) +
+      labs(color = "Countries")
+
+  })
+  
+})
+
+
+shinyApp(ui, server)
+
+
+```
