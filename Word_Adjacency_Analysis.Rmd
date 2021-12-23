@@ -10,7 +10,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(igraph);library(dplyr);library(ggplot2);library(expss)
-lm <- read_graph("C:\\Users\\mxkep\\OneDrive\\HU\\512\\adjnoun.gml", format="gml")
+lm <- read_graph("data\\adjnoun.gml", format="gml")
 
 
 ```
