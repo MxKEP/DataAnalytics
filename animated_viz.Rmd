@@ -1,0 +1,42 @@
+---
+title: "Animated Visualizations"
+author: "Michael Polonio"
+date: "4/20/2021"
+output:
+  pdf_document: default
+  html_document:
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+Animated and interactive visualizations can give us an excellent understanding of the dataset we are analyzing. We will be looking at a well known dataset in R called Gapminder. This dataset contains country data such as population, life expectancy, and GDP per capita from the years 1952 to 2007. I chose this dataset because I think the results will be easy to interpret through animated and interactive visualization, and I think the topic is something that everyone can relate to.
+
+## Methods
+To conduct this analysis I used the gganimate and Shiny R packages on the Gapminder dataset. The Shiny portion of this assignment lives in 512_interactive_shiny.html which I submitted in Canvas. Please let me know if you have any trouble viewing it. The user is able to choose the range of years to view the plots of each of the three variables between two different countries.
+
+```{r}
+library(gapminder);library(gganimate);library(ggplot2)
+
+ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop, color = continent)) +
+  geom_point() +
+  scale_x_log10() +
+  theme_bw() +
+  shadow_wake(.1)+
+  labs(title = 'Year: {frame_time}', x = 'GDP Per Capita', y = 'Life expectancy') +
+  transition_time(year) +
+  ease_aes('linear')
+
+```
+
+# Analysis
+
+As the animated plot transitions through the years you can see the GDP per capita and the life expectancy steadily increases for a vast majority of countries. One of the things that stands out is the country with the largest population (China) sees a sharp drop in life expectancy and GDP from the years 1958 until about 1962. I think it is important to note that these are the exact years of Chairman Mao Zedong's Great Leap Forward Policy, which lead to the deaths of an estimated 15 to 55 million people in China (Smil, BMJ : British Medical Journal). I think it is highly probable that a decreasing life expectancy is indicative of troubles such as war, famine, and disease. I included the shadow wake of the points so it is easier to determine the trajectory.
+
+# Citation
+
+Smil, Vaclav (18 December 1999). "China's great famine: 40 years later". BMJ : British Medical Journal. 319 
+
