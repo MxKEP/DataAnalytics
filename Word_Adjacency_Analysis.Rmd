@@ -10,6 +10,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(igraph);library(dplyr);library(ggplot2);library(expss)
+
+# Dataset publicly available at https://github.com/gephi/gephi/wiki/Datasets
 lm <- read_graph("data\\adjnoun.gml", format="gml")
 
 
